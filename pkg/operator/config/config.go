@@ -57,13 +57,29 @@ type BugzillaRelease struct {
 
 type Group []string
 
+type Component struct {
+	// lead should match the bugzilla default assignee the component and will get notifications of new BZs by default.
+	Lead string `yaml:"lead"`
+	// developers are not assigned by default, but might be on first comment if autoCommentAssign is true.
+	// This can have group:<group-name> references.
+	Developers []string `yaml:"developers"`
+	// watchers get notified about new bugzillas. If this is empty, the lead is notified.
+	// This can have group:<group-name> references.
+	Watchers []string `yaml:"watchers"`
+	// the first commentor from the developers is auto-assigned if the default
+	// assignee hasn't commented yet.
+	AssignFirstDeveloperCommentor bool `yaml:"autoCommentAssign"`
+}
+
 type OperatorConfig struct {
 	Credentials Credentials   `yaml:"credentials"`
 	Lists       BugzillaLists `yaml:"lists"`
 
 	Release BugzillaRelease `yaml:"release"`
 
-	Groups map[string]Group `yaml:"groups"`
+	// groups are list of emails or references to other groups with the syntax group:<other-group>.
+	Groups     map[string]Group     `yaml:"groups"`
+	Components map[string]Component `yaml:"components"`
 
 	// SlackChannel is a channel where the operator will post reports/etc.
 	SlackChannel      string `yaml:"slackChannel"`
